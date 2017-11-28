@@ -6,7 +6,8 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "gulp start",
-        "start:prod": "gulp start --production"
+        "start:prod": "gulp start --production",
+		"postinstall": "cd app && npm install"
     },
     "author": "",
     "license": "ISC",

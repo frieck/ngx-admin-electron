@@ -41,10 +41,14 @@ gulp.task('bundle-app', ['clean'], () => {
 });
 
 gulp.task('build', ['clean', 'bundle-app'], () => {
+    // TODO: Create a task that keeps searching for index.html in dist folder in order to start electron application.
+    // return new Promise(function(resolve, reject) {
     spawn('ng', ['build', '-dop=false', '-w'], {
         cwd: './app',
         stdio: 'inherit'
     }).on('close', () => {
         console.log('done...');
+        // resolve();
     });
+    // });
 });
