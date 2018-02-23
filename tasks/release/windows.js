@@ -129,14 +129,14 @@ var cleanClutter = function() {
     //return tmpDir.removeAsync('.');
 };
 
-var packApp_IA32 = function(buildArch) {
+var packApp_IA32 = function() {
     var deferred = Q.defer();
 
     packager({
         platform: "win32",
         arch: "ia32",
         name: manifest.exeName,
-        dir: projectDir.path('build'),
+        dir: projectDir.path('app/dist'),
         out: tmpDir.path(),
         asar: {
             unpack: '{*.node,env.json}'
@@ -152,14 +152,14 @@ var packApp_IA32 = function(buildArch) {
     return deferred.promise;
 }
 
-var packApp_X64 = function(buildArch) {
+var packApp_X64 = function() {
     var deferred = Q.defer();
 
     packager({
         platform: "win32",
         arch: "x64",
         name: manifest.exeName,
-        dir: projectDir.path('build'),
+        dir: projectDir.path('app/dist'),
         out: tmpDir.path(),
         asar: {
             unpack: '{*.node,env.json}'
