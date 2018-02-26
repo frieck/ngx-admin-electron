@@ -20,7 +20,7 @@ var init = function() {
     tmpDir = projectDir.dir('./tmp', {
         empty: true
     });
-    manifest = projectDir.read('app/package.json', 'json');
+    manifest = projectDir.read('package.json', 'json');
 
     return new Q();
 };
@@ -42,7 +42,7 @@ var finalize = function() {
             'ProductName': manifest.productName,
             'FileDescription': manifest.description,
             'ProductVersion': manifest.version,
-            'CompanyName': manifest.author, // it might be better to add another field to package.json for this
+            'CompanyName': manifest.companyName, // it might be better to add another field to package.json for this
             'LegalCopyright': manifest.copyright,
             'OriginalFilename': manifest.productName + '.exe'
         }
@@ -57,77 +57,21 @@ var finalize = function() {
     return deferred.promise;
 };
 
-var createInstaller = function() {
-    var deferred = Q.defer();
-
-    var finalPackageName = utils.getReleasePackageName(manifest) + '.exe';
-    var installScript = projectDir.read('resources/windows/installer.nsi');
-
-    installScript = utils.replace(installScript, {
-        name: manifest.name,
-        productName: manifest.productName,
-        author: manifest.author,
-        version: manifest.version,
-        src: readyAppDir.path(),
-        dest: releasesDir.path(finalPackageName),
-        icon: readyAppDir.path('icon.ico'),
-        setupIcon: projectDir.path('resources/windows/setup-icon.ico'),
-        banner: projectDir.path('resources/windows/setup-banner.bmp'),
-    });
-    tmpDir.write('installer.nsi', installScript);
-
-    gulpUtil.log('Building installer with NSIS... (' + finalPackageName + ')');
-
-    // Remove destination file if already exists.
-    releasesDir.remove(finalPackageName);
-
-    // Note: NSIS have to be added to PATH (environment variables).
-    var nsis = childProcess.spawn('makensis', [
-        tmpDir.path('installer.nsi')
-    ], {
-        stdio: 'inherit'
-    });
-    nsis.on('error', function(err) {
-        if (err.message === 'spawn makensis ENOENT') {
-            throw "Can't find NSIS. Are you sure you've installed it and" + " added to PATH environment variable?";
-        } else {
-            throw err;
-        }
-    });
-    nsis.on('close', function() {
-        gulpUtil.log('Installer ready!', releasesDir.path(finalPackageName));
-        deferred.resolve();
-    });
-
-    return deferred.promise;
-};
-
 var createWinstaller = function() {
-
-    var src = `https://dl.bintray.com/frieck/nupkg${arch == 'x64' ? 'x64' : 'x86'}`
 
     var opts = {
         appDirectory: readyAppDir.path(),
         outputDirectory: releasesDir.path(),
         authors: manifest.author,
         exe: manifest.exeName + '.exe',
-        setupIcon: projectDir.path('resources/windows/setup.ico'),
+        name: manifest.exeName,
+        setupIcon: projectDir.path('resources/windows/setup-icon.ico'),
         iconUrl: projectDir.path('resources/windows/icon.ico'),
-        setupExe: `Setup-${manifest.version}-${arch == 'ia32' ? 'x86' : 'x64'}.exe`,
-        remoteReleases: src
-    }
-
-    if (process.env.CERT_PWD != undefined && process.env.CERT_PWD != '') {
-        opts.certificateFile = "./sign/FARSystems.pfx";
-        opts.certificatePassword = process.env.CERT_PWD;
+        setupExe: `Setup-${manifest.version}-${arch == 'ia32' ? 'x86' : 'x64'}.exe`
     }
 
     return electronInstaller.createWindowsInstaller(opts);
 }
-
-var cleanClutter = function() {
-    //return tmpDir.removeAsync('.');
-};
 
 var packApp_IA32 = function() {
     var deferred = Q.defer();
@@ -182,12 +126,10 @@ module.exports = function() {
         .then(cleanupRuntime)
         .then(finalize)
         .then(createWinstaller)
-        //.then(cleanClutter)
         .then(packApp_X64)
         .then(cleanupRuntime)
         .then(finalize)
         .then(createWinstaller)
-        //.then(cleanClutter)
         .then(() => {
             deferred.resolve();
         })

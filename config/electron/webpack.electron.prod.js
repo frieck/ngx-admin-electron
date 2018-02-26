@@ -9,7 +9,7 @@ module.exports = webpackMerge(commonConfig, {
     plugins: [
         new JavaScriptObfuscator({
             compact: true,
-            sourceMap: true
+            sourceMap: false
         }),
 
         new webpack.DefinePlugin({

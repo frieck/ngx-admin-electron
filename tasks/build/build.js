@@ -16,12 +16,12 @@ gulp.task('bundle-app', ['clean'], () => {
     return Promise.all([
         new Promise(function(resolve, reject) {
             if (util.env.production) {
-                spawn('webpack', ['--config', './config/electron/webpack.electron.dev.js'], { stdio: 'inherit' })
+                spawn('webpack', ['--config', './config/electron/webpack.electron.prod.js'], { stdio: 'inherit' })
                     .on('close', () => {
                         resolve();
                     });
             } else {
-                spawn('webpack', ['--config', './config/electron/webpack.electron.prod.js'], { stdio: 'inherit' })
+                spawn('webpack', ['--config', './config/electron/webpack.electron.dev.js'], { stdio: 'inherit' })
                     .on('close', () => {
                         resolve();
                     });
@@ -40,15 +40,24 @@ gulp.task('bundle-app', ['clean'], () => {
     ]);
 });
 
-gulp.task('build', ['clean', 'bundle-app'], () => {
+gulp.task('watch', ['clean', 'bundle-app'], () => {
     // TODO: Create a task that keeps searching for index.html in dist folder in order to start electron application.
-    // return new Promise(function(resolve, reject) {
     spawn('ng', ['build', '-dop=false', '-w'], {
         cwd: './app',
         stdio: 'inherit'
     }).on('close', () => {
         console.log('done...');
-        // resolve();
     });
-    // });
+});
+
+gulp.task('build', ['clean', 'bundle-app'], () => {
+    return new Promise(function(resolve, reject) {
+        spawn('ng', ['build', '-prod', '-dop=false'], {
+            cwd: './app',
+            stdio: 'inherit'
+        }).on('close', () => {
+            console.log('done...');
+            resolve();
+        });
+    });
 });

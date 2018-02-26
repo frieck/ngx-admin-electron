@@ -23,7 +23,7 @@ var init = function() {
     });
     releasesDMGDir = projectDir.dir('./releases/dmg');
     releasesZIPDir = projectDir.dir('./releases/zip');
-    manifest = projectDir.read('app/package.json', 'json');
+    manifest = projectDir.read('package.json', 'json');
 
     return new Q();
 };
@@ -182,7 +182,7 @@ var packApp = function() {
     packager({
         platform: "darwin",
         arch: "all",
-        dir: projectDir.path('build'),
+        dir: projectDir.path('app/dist'),
         out: tmpDir.path(),
         asar: true,
         overwrite: true

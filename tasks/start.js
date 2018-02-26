@@ -7,7 +7,7 @@ var gulp = require('gulp');
 
 
 
-gulp.task('start', ['build', 'liveReload'], function() {
+gulp.task('start', ['watch', 'liveReload'], function() {
     electron.start(['./app/dist', '--disable-updater'])
     electron.on('close', function() {
         // User closed the app. Kill the host process.

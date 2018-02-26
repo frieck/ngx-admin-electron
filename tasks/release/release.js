@@ -14,7 +14,7 @@ var releaseForOs = {
 
 gulp.task('release', ['build'], function() {
     var projectDir = jetpack;
-    var manifest = projectDir.read('app/package.json', 'json');
+    var manifest = projectDir.read('package.json', 'json');
     releaseForOs[utils.os()]().then(() => {
         fs.writeFile(projectDir.path('releases/latest-version'), manifest.version, function(err) {
             if (err) {
