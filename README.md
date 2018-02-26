@@ -22,7 +22,7 @@ npm start
 
 To generate a release just type
 ```sh
-npm release
+npm run release
 ```
 It will build a release for your current running OS. 
 
