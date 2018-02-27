@@ -1,5 +1,7 @@
 # Electron Boilerplate with [NGX-ADMIN](http://akveo.com/ngx-admin/)
 
+[Imgur](https://i.imgur.com/VI7RbL1.png)
+
 ## What's included:
 
 - Typescript both in main and render processes
